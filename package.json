@@ -1,0 +1,41 @@
+{
+  "author": "Mike Brennan",
+  "bugs": {
+    "url": "https://github.com/mbrennan/passport-eveonline/issues"
+  },
+  "description": "EVE Online authentication strategy for Passport.",
+  "devDependencies": {
+    "coffee-script": "^1.8.0",
+    "del": "^0.1.3",
+    "gulp": "^3.8.9",
+    "gulp-bump": "^0.1.11",
+    "gulp-changed": "^1.0.0",
+    "gulp-clean": "^0.3.1",
+    "gulp-coffee": "^2.2.0",
+    "gulp-util": "^3.0.1"
+  },
+  "homepage": "https://github.com/mbrennan/passport-eveonline",
+  "keywords": [
+    "auth",
+    "authn",
+    "authentication",
+    "eve",
+    "eve online",
+    "identity",
+    "passport"
+  ],
+  "license": "ISC",
+  "main": "./lib",
+  "name": "passport-eveonline",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mbrennan/passport-eveonline"
+  },
+  "scripts": {
+    "build": "gulp",
+    "bump": "gulp bump",
+    "clean": "gulp clean",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "0.1.0"
+}
