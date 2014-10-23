@@ -12,7 +12,10 @@
     "gulp-changed": "^1.0.0",
     "gulp-clean": "^0.3.1",
     "gulp-coffee": "^2.2.0",
-    "gulp-util": "^3.0.1"
+    "gulp-util": "^3.0.1",
+    "mocha": "^2.0.1",
+    "should": "^4.1.0",
+    "sinon": "^1.10.3"
   },
   "homepage": "https://github.com/mbrennan/passport-eveonline",
   "keywords": [
@@ -35,7 +38,10 @@
     "build": "gulp",
     "bump": "gulp bump",
     "clean": "gulp clean",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --compilers coffee:coffee-script/register --require should test"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "dependencies": {
+    "passport-oauth2": "^1.1.2"
+  }
 }
