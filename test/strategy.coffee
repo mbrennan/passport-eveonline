@@ -1,8 +1,10 @@
 sinon = require('sinon')
 
 class DummyStrategy
-  constructor: ->
+  constructor: (_arguments) ->
     @isInherited = true
+    @parentConstructor = sinon.spy()
+    @parentConstructor.apply(@parentConstructor, _arguments)
 
 EveOnlineStrategy = require('../src/strategy-injected-parent.coffee')(DummyStrategy)
 
@@ -16,3 +18,7 @@ describe 'EVE Online OAuth Strategy', ->
 
   it 'must inherit from passport-oauth2 strategy', ->
     @strategy.isInherited.should.be.true
+
+  it "should invoke the base strategy's constructor", ->
+    @strategy.parentConstructor.called.should.be.true
+
