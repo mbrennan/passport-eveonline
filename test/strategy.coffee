@@ -7,9 +7,11 @@ describe 'EVE Online OAuth Strategy', ->
     @oAuth2Strategy = sinon.spy()
     @oAuth2Strategy['authenticate'] = sinon.spy()
     @clientID = 12345;
+    @clientSecret = 'deadbeefbaadf00d'
 
     @strategyOptions =
       clientID: @clientID
+      clientSecret: @clientSecret
       oAuth2Strategy: @oAuth2Strategy
     @verify = ->
 
@@ -23,15 +25,19 @@ describe 'EVE Online OAuth Strategy', ->
     it "should invoke passport-oAuth2 strategy's constructor", ->
       @oAuth2Strategy.called.should.be.true
 
-    it "should pass an authorization URL to passport-oauth2 strategy's \
+    it "should pass authorizationURL to passport-oauth2 strategy's \
        constructor", ->
       @constructorOptions.should.have.property('authorizationURL')
 
-    it "should pass a token URL to passport-oauth2 strategy's constructor", ->
+    it "should pass tokenURL to passport-oauth2 strategy's constructor", ->
       @constructorOptions.should.have.property('tokenURL')
 
-    it "should pass a client ID to passport-oauth2 strategy's constructor", ->
+    it "should pass clientID to passport-oauth2 strategy's constructor", ->
       @constructorOptions.should.have.property('clientID').equal @clientID
+
+    it "should pass clientSecret to passport-oauth2 strategy's constructor", ->
+      @constructorOptions.should.have.property(
+        'clientSecret').equal @clientSecret
 
   describe 'when authenticating', ->
     beforeEach ->
