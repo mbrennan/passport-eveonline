@@ -3,8 +3,14 @@ sinon = require('sinon')
 class DummyStrategy
   constructor: (_arguments...) ->
     @isInherited = true
+
     @parentConstructor = sinon.spy()
-    @parentConstructor.apply(@parentConstructor, _arguments)
+    @parentConstructor.apply(this, _arguments)
+
+    @parentAuthenticate = sinon.spy()
+
+  authenticate: (_arguments...) ->
+    @parentAuthenticate.apply(this, _arguments)
 
 EveOnlineStrategy = require('../src/strategy.coffee')(DummyStrategy)
 
@@ -39,3 +45,14 @@ describe 'EVE Online OAuth Strategy', ->
     it 'should pass clientSecret to the base strategy constructor', ->
       @constructorOptions.should.have.property(
         'clientSecret').equal @clientSecret
+
+  describe 'when authenticating', ->
+    beforeEach ->
+      @request = 'request'
+      @authenticateOptions = {some: 'options'}
+      @strategy.authenticate(@request, @authenticateOptions)
+
+    it 'should invoke the base authenticate function', ->
+      @strategy.parentAuthenticate.calledWith(
+        @request, @authenticateOptions).should.be.true
+
