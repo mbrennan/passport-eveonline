@@ -3,14 +3,16 @@ EveOnlineStrategy = require('../src/')
 OAuth2Strategy = require('passport-oauth2')
 
 describe 'EVE Online OAuth Strategy', ->
-  before ->
+  beforeEach ->
     @oAuth2Strategy = sinon.spy()
     @oAuth2Strategy['authenticate'] = sinon.spy()
+    @clientID = 12345;
 
     @strategyOptions =
-      some: 'options'
+      clientID: @clientID
       oAuth2Strategy: @oAuth2Strategy
     @verify = ->
+
     @strategy = new EveOnlineStrategy(@strategyOptions, @verify)
     @constructorOptions = @oAuth2Strategy.args[0][0]
 
@@ -27,6 +29,9 @@ describe 'EVE Online OAuth Strategy', ->
 
     it "should pass a token URL to passport-oauth2 strategy's constructor", ->
       @constructorOptions.should.have.property('tokenURL')
+
+    it "should pass a client ID to passport-oauth2 strategy's constructor", ->
+      @constructorOptions.should.have.property('clientID').equal @clientID
 
   describe 'when authenticating', ->
     beforeEach ->
