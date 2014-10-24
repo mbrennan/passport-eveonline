@@ -11,8 +11,10 @@ EveOnlineStrategy = require('../src/strategy.coffee')(DummyStrategy)
 describe 'EVE Online OAuth Strategy', ->
   beforeEach ->
     @clientID = 12345
+    @clientSecret = 'deadbeefbaadf00d'
     @strategy = new EveOnlineStrategy
       clientID: @clientID
+      clientSecret: @clientSecret
     @constructorOptions = @strategy.parentConstructor.args[0][0]
 
   it "should be named 'eveonline'", ->
@@ -33,3 +35,7 @@ describe 'EVE Online OAuth Strategy', ->
 
     it 'should pass clientID to the base strategy constructor', ->
       @constructorOptions.should.have.property('clientID').equal @clientID
+
+    it 'should pass clientSecret to the base strategy constructor', ->
+      @constructorOptions.should.have.property(
+        'clientSecret').equal @clientSecret
