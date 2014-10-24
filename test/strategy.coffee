@@ -25,6 +25,9 @@ describe 'EVE Online OAuth Strategy', ->
        constructor", ->
       @constructorOptions.should.have.property('authorizationURL')
 
+    it "should pass a token URL to passport-oauth2 strategy's constructor", ->
+      @constructorOptions.should.have.property('tokenURL')
+
   describe 'when authenticating', ->
     beforeEach ->
       @request = ' request'

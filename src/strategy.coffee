@@ -9,6 +9,7 @@ class EveOnlineStrategy
 
     options.oAuth2Strategy ?= OAuth2Strategy
     options.authorizationURL ?= 'https://login.eveonline.com/oauth/authorize'
+    options.tokenURL ?= 'https://login.eveonline.com/oauth/token'
 
     @name = 'eveonline'
     @oAuth2Strategy = options.oAuth2Strategy
