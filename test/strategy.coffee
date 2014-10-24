@@ -18,10 +18,12 @@ describe 'EVE Online OAuth Strategy', ->
   beforeEach ->
     @clientID = 12345
     @clientSecret = 'deadbeefbaadf00d'
+    @callbackURL = 'https://dead.beef/bad/f00d'
     @verify = ->
     @strategy = new EveOnlineStrategy(
       clientID: @clientID
       clientSecret: @clientSecret,
+      callbackURL: @callbackURL
       @verify)
     @constructorOptions = @strategy.parentConstructor.args[0][0]
     @constructorVerifyFunction = @strategy.parentConstructor.args[0][1]
@@ -49,8 +51,21 @@ describe 'EVE Online OAuth Strategy', ->
       @constructorOptions.should.have.property(
         'clientSecret').equal @clientSecret
 
+    it 'should pass callbackURL to the base strategy constructor', ->
+      @constructorOptions.should.have.property('callbackURL').equal @callbackURL
+
     it 'should pass a verify function to the base strategy constructor', ->
       @constructorVerifyFunction.should.be.a.Function
+
+
+  describe 'when constructing without a callbackURL', ->
+    it 'should throw an exception', ->
+      (->
+        new EveOnlineStrategy(
+          clientID: @clientID
+          clientSecret: @clientSecret,
+          @verify)
+      ).should.throw()
 
   describe 'when authenticating', ->
     beforeEach ->
