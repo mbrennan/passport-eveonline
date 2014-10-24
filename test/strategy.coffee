@@ -12,16 +12,19 @@ class DummyStrategy
   authenticate: (_arguments...) ->
     @parentAuthenticate.apply(this, _arguments)
 
-EveOnlineStrategy = require('../src/strategy.coffee')(DummyStrategy)
+EveOnlineStrategy = require('../src/strategy')(DummyStrategy)
 
 describe 'EVE Online OAuth Strategy', ->
   beforeEach ->
     @clientID = 12345
     @clientSecret = 'deadbeefbaadf00d'
-    @strategy = new EveOnlineStrategy
+    @verify = ->
+    @strategy = new EveOnlineStrategy(
       clientID: @clientID
-      clientSecret: @clientSecret
+      clientSecret: @clientSecret,
+      @verify)
     @constructorOptions = @strategy.parentConstructor.args[0][0]
+    @constructorVerifyFunction = @strategy.parentConstructor.args[0][1]
 
   it "should be named 'eveonline'", ->
     @strategy.name.should.equal 'eveonline'
@@ -45,6 +48,9 @@ describe 'EVE Online OAuth Strategy', ->
     it 'should pass clientSecret to the base strategy constructor', ->
       @constructorOptions.should.have.property(
         'clientSecret').equal @clientSecret
+
+    it 'should pass a verify function to the base strategy constructor', ->
+      @constructorVerifyFunction.should.be.a.Function
 
   describe 'when authenticating', ->
     beforeEach ->

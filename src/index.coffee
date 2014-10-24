@@ -1,1 +1,1 @@
-module.exports = require('./strategy-default-parent.coffee')
+module.exports = require('./strategy-default-parent')
