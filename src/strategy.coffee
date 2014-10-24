@@ -1,5 +1,10 @@
-OAuth2Strategy = require('passport-oauth2')
-EveOnlineStrategyWithInjectedParent =
-  require('./strategy-injected-parent.coffee')(OAUth2Strategy)
+module.exports = (oAuth2Strategy) ->
+  class EveOnlineStrategy extends oAuth2Strategy
+    constructor: (options) ->
+      options ?= new Object()
+      options.authorizationURL |= 'https://login.eveonline.com/oauth/authorize'
+      super(options)
 
-module.exports = EveOnlineStrategyWithInjectedParent
+      @name = 'eveonline'
+
+  return EveOnlineStrategy
