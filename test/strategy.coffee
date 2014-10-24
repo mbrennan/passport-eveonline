@@ -1,32 +1,36 @@
 sinon = require('sinon')
 EveOnlineStrategy = require('../src/')
 
-class StrategyInstance
-  constructor: ->
+class DummyStrategy
+  constructor: (args...) ->
     @authenticate = sinon.spy()
+    @constructor = sinon.spy()
+    @constructor.apply(@constructor, args)
 
 describe 'EVE Online OAuth Strategy', ->
   beforeEach ->
-    @oAuth2StrategyInstance = new StrategyInstance
-    @OAuth2Strategy = sinon.stub().returns(@oAuth2StrategyInstance)
     @clientID = 12345;
     @clientSecret = 'deadbeefbaadf00d'
 
     @strategyOptions =
       clientID: @clientID
       clientSecret: @clientSecret
-      oAuth2Strategy: @OAuth2Strategy
+      oAuth2Strategy: DummyStrategy
     @verify = ->
 
     @strategy = new EveOnlineStrategy(@strategyOptions, @verify)
-    @constructorOptions = @OAuth2Strategy.args[0][0]
+    @oAuth2Strategy = @strategy._oAuth2Strategy
+    @constructorOptions = @oAuth2Strategy.constructor.args[0][0]
 
   it "should be named 'eveonline'", ->
     @strategy.name.should.equal 'eveonline'
 
   describe 'when constructing', ->
     it "should invoke passport-oAuth2 strategy's constructor", ->
-      @OAuth2Strategy.called.should.be.true
+      @oAuth2Strategy.constructor.called.should.be.true
+
+    it "should construct a new instance of the passport-oauth2 strategy", ->
+      @oAuth2Strategy.should.be.type('object')
 
     it "should pass authorizationURL to passport-oauth2 strategy's \
        constructor", ->
@@ -49,5 +53,5 @@ describe 'EVE Online OAuth Strategy', ->
       @strategy.authenticate(@request, @authenticateOptions)
 
     it "should invoke passport-oauth2 strategy's authenticate function", ->
-      @oAuth2StrategyInstance.authenticate.calledWith(
+      @oAuth2Strategy.authenticate.calledWith(
         @request, @authenticateOptions).should.be.true
