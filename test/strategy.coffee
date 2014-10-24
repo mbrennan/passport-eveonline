@@ -26,3 +26,5 @@ describe 'EVE Online OAuth Strategy', ->
     it 'should pass authorizationURL to the base strategy constructor', ->
       @constructorOptions.should.have.property('authorizationURL')
 
+    it 'should pass tokenURL to the base strategy constructor', ->
+      @constructorOptions.should.have.property('tokenURL')
