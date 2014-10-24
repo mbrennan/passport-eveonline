@@ -12,12 +12,18 @@ describe 'EVE Online OAuth Strategy', ->
       oAuth2Strategy: @oAuth2Strategy
     @verify = ->
     @strategy = new EveOnlineStrategy(@strategyOptions, @verify)
+    @constructorOptions = @oAuth2Strategy.args[0][0]
 
   it "should be named 'eveonline'", ->
     @strategy.name.should.equal 'eveonline'
 
-  it "should invoke passport-ouath2 strategy's constructor", ->
-    @oAuth2Strategy.calledWith(@strategyOptions, @verify).should.be.true
+  describe 'when constructing', ->
+    it "should invoke passport-oAuth2 strategy's constructor", ->
+      @oAuth2Strategy.called.should.be.true
+
+    it "should pass an authorization URL to passport-oauth2 strategy's \
+       constructor", ->
+      @constructorOptions.should.have.property('authorizationURL')
 
   describe 'when authenticating', ->
     beforeEach ->
