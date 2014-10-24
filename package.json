@@ -15,7 +15,8 @@
     "gulp-util": "^3.0.1",
     "mocha": "^2.0.1",
     "should": "^4.1.0",
-    "sinon": "^1.10.3"
+    "sinon": "^1.10.3",
+    "gulp-plumber": "^0.6.6"
   },
   "homepage": "https://github.com/mbrennan/passport-eveonline",
   "keywords": [
@@ -38,7 +39,8 @@
     "build": "gulp",
     "bump": "gulp bump",
     "clean": "gulp clean",
-    "test": "mocha --compilers coffee:coffee-script/register --require should test"
+    "test": "mocha --compilers coffee:coffee-script/register --require should test",
+    "watch": "gulp watch-coffeescript"
   },
   "version": "0.1.0",
   "dependencies": {
