@@ -55,3 +55,7 @@ describe 'EVE Online OAuth Strategy', ->
     it "should invoke passport-oauth2 strategy's authenticate function", ->
       @oAuth2Strategy.authenticate.calledWith(
         @request, @authenticateOptions).should.be.true
+
+    it 'should set the context to the same context it was called on', ->
+      @oAuth2Strategy.authenticate.calledOn(@oAuth2Strategy)
+
