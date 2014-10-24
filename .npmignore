@@ -1,0 +1,6 @@
+.idea
+.npmignore
+*.log
+src
+test
+Gulpfile.coffee
