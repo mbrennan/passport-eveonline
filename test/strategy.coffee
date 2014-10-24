@@ -11,5 +11,8 @@ describe 'EVE Online OAuth Strategy', ->
     @strategy = new EveOnlineStrategy()
     console.log('is inherited?' + @strategy.isInherited)
 
+  it "should be named 'eveonline'", ->
+    @strategy.name.should.equal 'eveonline'
+
   it 'must inherit from passport-oauth2 strategy', ->
     @strategy.isInherited.should.be.true
