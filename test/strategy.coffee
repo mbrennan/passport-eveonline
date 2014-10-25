@@ -19,14 +19,14 @@ describe 'EVE Online OAuth Strategy', ->
     @clientID = 12345
     @clientSecret = 'deadbeefbaadf00d'
     @callbackURL = 'https://dead.beef/bad/f00d'
-    @verify = ->
+    @verify = sinon.spy()
     @strategy = new EveOnlineStrategy(
       clientID: @clientID
       clientSecret: @clientSecret,
       callbackURL: @callbackURL
       @verify)
     @constructorOptions = @strategy.parentConstructor.args[0][0]
-    @constructorVerifyFunction = @strategy.parentConstructor.args[0][1]
+    @oAuth2Verify = @strategy.parentConstructor.args[0][1]
 
   it "should be named 'eveonline'", ->
     @strategy.name.should.equal 'eveonline'
@@ -55,7 +55,7 @@ describe 'EVE Online OAuth Strategy', ->
       @constructorOptions.should.have.property('callbackURL').equal @callbackURL
 
     it 'should pass a verify function to the base strategy constructor', ->
-      @constructorVerifyFunction.should.be.a.Function
+      @oAuth2Verify.should.be.a.Function
 
 
   describe 'when constructing without a callbackURL', ->
@@ -77,3 +77,16 @@ describe 'EVE Online OAuth Strategy', ->
       @strategy.parentAuthenticate.calledWith(
         @request, @authenticateOptions).should.be.true
 
+  describe 'when verifying', ->
+    beforeEach ->
+      @oAuth2VerifyDone = 'done callback'
+      @profile = 'profile'
+      @oAuth2Verify.call(
+        @strategy,
+        'access token',
+        'refresh token',
+        @profile,
+        @oAuth2VerifyDone)
+
+    it 'translates passport-oauth2 verifications', ->
+      @verify.calledWith(@profile, @oAuth2VerifyDone).should.be.true
