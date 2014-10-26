@@ -42,6 +42,9 @@ describe 'EVE Online OAuth Strategy', ->
   it 'must inherit from passport-oauth2 strategy', ->
     @strategy.isInherited.should.be.true
 
+  it "must not have an attribute named '_verify'", ->
+    should.not.exist @strategy._verify
+
   describe 'when created with defaults', ->
     it 'should invoke the base strategy constructor', ->
       @strategy.parentConstructor.called.should.be.true
@@ -170,6 +173,17 @@ describe 'EVE Online OAuth Strategy', ->
       it 'should find the character owner hash', ->
         @characterInformation.characterOwnerHash.should.equal \
           @expectedProfile.CharacterOwnerHash
+
+    describe 'when called back with an error', ->
+      beforeEach ->
+        error =
+          error: 'invalid_token'
+          error_description: 'The authorization header is not set'
+        @oAuth2GetCallback(null, JSON.stringify(error))
+        @error = @userProfileCallback.args[0][0]
+
+      it 'should callback parsing the error', ->
+        @error.should.be.ok
 
     describe 'when called back with a mal-formed JSON body', ->
       beforeEach ->
