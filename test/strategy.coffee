@@ -67,20 +67,25 @@ describe 'EVE Online OAuth Strategy', ->
     it 'should pass a verify function to the base strategy constructor', ->
       @oAuth2Verify.should.be.a.Function
 
-  describe 'when constructing with a custom authorizationURL', ->
+  describe 'when constructing with custom URLs', ->
     beforeEach ->
-      @customAuthorizationURL = 'customAuthorizationURL'
+      @customAuthorizationURL = 'custom authorization URL'
+      @customTokenURL = 'custom token URL'
       @strategy = new EveOnlineStrategy(
         clientID: @clientID
         clientSecret: @clientSecret
         callbackURL: @callbackURL
         authorizationURL: @customAuthorizationURL
+        tokenURL: @customTokenURL
         @verify)
       @constructorOptions = @strategy.parentConstructor.args[0][0]
 
     it 'should use the authorizationURL property provided', ->
       @constructorOptions.should.have.property('authorizationURL').equal \
         @customAuthorizationURL
+
+    it 'should use the tokenURL property provided', ->
+      @constructorOptions.should.have.property('tokenURL').equal @customTokenURL
 
 
   describe 'when constructing without a callbackURL', ->
