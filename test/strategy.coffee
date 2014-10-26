@@ -42,15 +42,17 @@ describe 'EVE Online OAuth Strategy', ->
   it 'must inherit from passport-oauth2 strategy', ->
     @strategy.isInherited.should.be.true
 
-  describe 'when constructing', ->
+  describe 'when constructing with defaults', ->
     it 'should invoke the base strategy constructor', ->
       @strategy.parentConstructor.called.should.be.true
 
     it 'should pass authorizationURL to the base strategy constructor', ->
-      @constructorOptions.should.have.property('authorizationURL')
+      @constructorOptions.should.have.property('authorizationURL').equal \
+        constants.defaultAuthorizationURL
 
     it 'should pass tokenURL to the base strategy constructor', ->
-      @constructorOptions.should.have.property('tokenURL')
+      @constructorOptions.should.have.property('tokenURL').equal \
+        constants.defaultTokenURL
 
     it 'should pass clientID to the base strategy constructor', ->
       @constructorOptions.should.have.property('clientID').equal @clientID
@@ -99,7 +101,7 @@ describe 'EVE Online OAuth Strategy', ->
     it 'translates passport-oauth2 verifications', ->
       @verify.calledWith(@profile, @oAuth2VerifyDone).should.be.true
 
-  describe 'when building character information', ->
+  describe 'when building character information with defaults', ->
     beforeEach ->
       @accessToken = 'deadbeef'
       @userProfileCallback = sinon.spy()
@@ -109,7 +111,7 @@ describe 'EVE Online OAuth Strategy', ->
 
     it 'should fetch character information using the protected _oauth2
         object', ->
-      @oAuth2Get[0].should.be.a.String
+      @oAuth2Get[0].should.equal constants.defaultVerifyURL
       @oAuth2Get[1].should.equal @accessToken
       @oAuth2GetCallback.should.be.a.Function
 
@@ -150,7 +152,7 @@ describe 'EVE Online OAuth Strategy', ->
         @characterInformation.characterOwnerHash.should.equal \
           @expectedProfile.CharacterOwnerHash
 
-    describe 'when callbed back with a mal-formed JSON body', ->
+    describe 'when called back with a mal-formed JSON body', ->
       beforeEach ->
         @oAuth2GetCallback(null, 'a bad body', null)
         @error = @userProfileCallback.args[0][0]

@@ -10,17 +10,18 @@ module.exports = (oAuth2Strategy) ->
 
       options ?= new Object()
 
-      options.authorizationURL ?=
-        'https://sisilogin.testeveonline.com/oauth/authorize'
-      options.tokenURL ?=
-        'https://sisilogin.testeveonline.com/oauth/token'
+      options.authorizationURL ?= constants.defaultAuthorizationURL
+      options.tokenURL ?= constants.defaultTokenURL
 
       super(options, @_verifyOAuth2)
 
       @name = 'eveonline'
 
     userProfile: (accessToken, done) ->
-      @_oauth2.get('', accessToken, @_parseCharacterInformation(done))
+      @_oauth2.get(
+        constants.defaultVerifyURL,
+        accessToken,
+        @_parseCharacterInformation(done))
 
     _verifyOAuth2: (accessToken, refreshToken, characterInformation, done) ->
       @_verify(characterInformation, done)
