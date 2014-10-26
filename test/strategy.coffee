@@ -87,7 +87,6 @@ describe 'EVE Online OAuth Strategy', ->
     it 'should use the tokenURL property provided', ->
       @constructorOptions.should.have.property('tokenURL').equal @customTokenURL
 
-
   describe 'when constructing without a callbackURL', ->
     it 'should throw an exception', ->
       (->
