@@ -28,6 +28,22 @@ module.exports = (oAuth2Strategy) ->
     _parseCharacterInformation: (done) ->
       return (error, body, response) ->
         done(new InternalOAuthError(
-          constants.fetchCharacterInformationError, error))
+          constants.fetchCharacterInformationError, error)) if error
+
+        try
+          responseBody = JSON.parse body
+
+          characterInformation =
+            characterID:        responseBody.CharacterID
+            characterName:      responseBody.CharacterName
+            expiresOn:          responseBody.ExpiresOn
+            scopes:             responseBody.Scopes
+            tokenType:          responseBody.TokenType
+            characterOwnerHash: responseBody.CharacterOwnerHash
+
+          done(null, characterInformation)
+
+        catch exception
+          done(exception)
 
   return EveOnlineStrategy

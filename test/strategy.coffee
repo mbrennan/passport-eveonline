@@ -1,5 +1,6 @@
-sinon = require('sinon')
 constants = require('../src/constants')
+sinon = require('sinon')
+should = require('should')
 
 class DummyOAuth2
   constructor: ->
@@ -104,34 +105,63 @@ describe 'EVE Online OAuth Strategy', ->
       @userProfileCallback = sinon.spy()
       @strategy.userProfile(@accessToken, @userProfileCallback)
       @oAuth2Get = @strategy._oauth2.get.args[0]
+      @oAuth2GetCallback = @oAuth2Get[2]
 
     it 'should fetch character information using the protected _oauth2
         object', ->
       @oAuth2Get[0].should.be.a.String
       @oAuth2Get[1].should.equal @accessToken
-      @oAuth2Get[2].should.be.a.Function
+      @oAuth2GetCallback.should.be.a.Function
 
-    describe 'when called back with response containing character
-              information', ->
+    describe 'when called back with character information', ->
       beforeEach ->
-        oAuth2GetCallback = @oAuth2Get[2]
-        oAuth2GetCallback(null, null, null)
         @expectedProfile =
-          characterID: 54321
-          characterName: 'Kooky Kira'
-          expiresOn: 'Some Expiration Date'
-          scopes: []
-          tokenType: 'Character'
-          characterOwnerHash: 'beefdeadbad'
+          CharacterID: 54321
+          CharacterName: 'Kooky Kira'
+          ExpiresOn: 'Some Expiration Date'
+          Scopes: 'some scopes'
+          TokenType: 'Character'
+          CharacterOwnerHash: 'beefdeadbad'
 
-      it 'should callback when complete', ->
-        @userProfileCallback.calledWith(null, @expectedProfile).should.be.true
+        @oAuth2GetCallback(null, JSON.stringify(@expectedProfile), null)
+        @characterInformation = @userProfileCallback.args[0][1]
+
+      it 'should not return an error', ->
+        should.not.exist @userProfileCallback.args[0][0]
+
+      it 'should find the character id', ->
+        @characterInformation.characterID.should.equal \
+          @expectedProfile.CharacterID
+
+      it 'should find the character name', ->
+        @characterInformation.characterName.should.equal \
+          @expectedProfile.CharacterName
+
+      it 'should find the expires on field', ->
+        @characterInformation.expiresOn.should.equal @expectedProfile.ExpiresOn
+
+      it 'should find the scopes field', ->
+        @characterInformation.scopes.should.equal @expectedProfile.Scopes
+
+      it 'should find the token type', ->
+        @characterInformation.tokenType.should.equal @expectedProfile.TokenType
+
+      it 'should find the character owner hash', ->
+        @characterInformation.characterOwnerHash.should.equal \
+          @expectedProfile.CharacterOwnerHash
+
+    describe 'when callbed back with a mal-formed JSON body', ->
+      beforeEach ->
+        @oAuth2GetCallback(null, 'a bad body', null)
+        @error = @userProfileCallback.args[0][0]
+
+      it 'should catch exceptions and callback with an error', ->
+          @error.should.be.ok
 
     describe 'when called back with an error', ->
       beforeEach ->
-        oAuth2GetCallback = @oAuth2Get[2]
         @innerError = new Error('some error')
-        oAuth2GetCallback(@innerError)
+        @oAuth2GetCallback(@innerError)
         @error = @userProfileCallback.args[0][0]
 
       it 'should callback with an InternalOAuthError', ->
