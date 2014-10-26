@@ -1,5 +1,9 @@
 sinon = require('sinon')
 
+class DummyOAuth2
+  constructor: ->
+    @get = sinon.spy()
+
 class DummyStrategy
   constructor: (_arguments...) ->
     @isInherited = true
@@ -8,9 +12,11 @@ class DummyStrategy
     @parentConstructor.apply(this, _arguments)
 
     @parentAuthenticate = sinon.spy()
+    @_oauth2 = new DummyOAuth2()
 
   authenticate: (_arguments...) ->
     @parentAuthenticate.apply(this, _arguments)
+
 
 EveOnlineStrategy = require('../src/strategy')(DummyStrategy)
 
@@ -90,3 +96,26 @@ describe 'EVE Online OAuth Strategy', ->
 
     it 'translates passport-oauth2 verifications', ->
       @verify.calledWith(@profile, @oAuth2VerifyDone).should.be.true
+
+  describe 'when building character information', ->
+    beforeEach ->
+      @accessToken = 'deadbeef'
+      @userProfileCallback = sinon.spy()
+      @strategy.userProfile(@accessToken, @userProfileCallback)
+      @oAuth2FunctionCall = @strategy._oauth2.get.args[0]
+
+    it 'should fetch character information using the protected _oauth2
+        object', ->
+      @oAuth2FunctionCall[0].should.be.a.String
+      @oAuth2FunctionCall[1].should.equal @accessToken
+      @oAuth2FunctionCall[2].should.be.a.Function
+
+    describe 'when called back with response containing character
+              information', ->
+      beforeEach ->
+        @expectedProfile = null
+
+      it 'should callback when complete', ->
+        @userProfileCallback.calledWith(null, @expectedProfile).should.be.true
+
+
