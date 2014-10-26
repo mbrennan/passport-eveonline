@@ -4,13 +4,13 @@ InternalOAuthError  = require('passport-oauth2').InternalOAuthError
 module.exports = (oAuth2Strategy) ->
   class EveOnlineStrategy extends oAuth2Strategy
     constructor: (options, @_verify) ->
-
       if not options or not options.callbackURL
         throw new TypeError('EveOnlineStrategy requires a callbackURL option')
 
       options ?= new Object()
 
       options.authorizationURL ?= constants.defaultAuthorizationURL
+      console.log options.authorizationURL
       options.tokenURL ?= constants.defaultTokenURL
 
       super(options, @_verifyOAuth2)

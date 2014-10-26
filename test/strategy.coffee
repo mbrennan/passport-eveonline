@@ -30,7 +30,7 @@ describe 'EVE Online OAuth Strategy', ->
     @verify = sinon.spy()
     @strategy = new EveOnlineStrategy(
       clientID: @clientID
-      clientSecret: @clientSecret,
+      clientSecret: @clientSecret
       callbackURL: @callbackURL
       @verify)
     @constructorOptions = @strategy.parentConstructor.args[0][0]
@@ -42,7 +42,7 @@ describe 'EVE Online OAuth Strategy', ->
   it 'must inherit from passport-oauth2 strategy', ->
     @strategy.isInherited.should.be.true
 
-  describe 'when constructing with defaults', ->
+  describe 'when created with defaults', ->
     it 'should invoke the base strategy constructor', ->
       @strategy.parentConstructor.called.should.be.true
 
@@ -66,6 +66,21 @@ describe 'EVE Online OAuth Strategy', ->
 
     it 'should pass a verify function to the base strategy constructor', ->
       @oAuth2Verify.should.be.a.Function
+
+  describe 'when constructing with a custom authorizationURL', ->
+    beforeEach ->
+      @customAuthorizationURL = 'customAuthorizationURL'
+      @strategy = new EveOnlineStrategy(
+        clientID: @clientID
+        clientSecret: @clientSecret
+        callbackURL: @callbackURL
+        authorizationURL: @customAuthorizationURL
+        @verify)
+      @constructorOptions = @strategy.parentConstructor.args[0][0]
+
+    it 'should use the authorizationURL property provided', ->
+      @constructorOptions.should.have.property('authorizationURL').equal \
+        @customAuthorizationURL
 
 
   describe 'when constructing without a callbackURL', ->
