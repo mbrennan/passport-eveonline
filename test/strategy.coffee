@@ -1,6 +1,7 @@
-constants = require('../src/constants')
 sinon = require('sinon')
 should = require('should')
+constants = require('../src/constants')
+VerificationError = require('../src/errors/VerificationError')
 
 class DummyOAuth2
   constructor: ->
@@ -174,16 +175,17 @@ describe 'EVE Online OAuth Strategy', ->
         @characterInformation.characterOwnerHash.should.equal \
           @expectedProfile.CharacterOwnerHash
 
-    describe 'when called back with an error', ->
+    describe 'when called back with an error in the JSON response', ->
       beforeEach ->
-        error =
+        @expectedError =
           error: 'invalid_token'
           error_description: 'The authorization header is not set'
-        @oAuth2GetCallback(null, JSON.stringify(error))
+        @oAuth2GetCallback(null, JSON.stringify(@expectedError))
         @error = @userProfileCallback.args[0][0]
 
-      it 'should callback parsing the error', ->
-        @error.should.be.ok
+      it 'should callback with a VerificationError', ->
+        @error.code.should.equal @expectedError.error
+        @error.description.should.equal @expectedError.error_description
 
     describe 'when called back with a mal-formed JSON body', ->
       beforeEach ->

@@ -1,5 +1,6 @@
-constants           = require './constants'
 InternalOAuthError  = require('passport-oauth2').InternalOAuthError
+constants           = require './constants'
+VerificationError   = require './errors/VerificationError'
 
 module.exports = (oAuth2Strategy) ->
   class EveOnlineStrategy extends oAuth2Strategy
@@ -22,43 +23,39 @@ module.exports = (oAuth2Strategy) ->
 
     userProfile: (accessToken, done) ->
       console.log("userProfile invoked, invoking _oauth2 with access token #{accessToken}...")
-      @_oauth2.get(@_verifyURL, accessToken, @_parseCharacterInformation(done))
+      @_oauth2.get(@_verifyURL, accessToken, (error, body, response) =>
+          @_parseCharacterInformation(error, body, response, done))
 
     _verifyOAuth2: (accessToken, refreshToken, characterInformation, done) ->
       console.log("_verifyOAuth2 invoked, accessToken #{accessToken}, refresh token #{refreshToken}, character info #{JSON.stringify(characterInformation)} ")
       @_verifyCallback(characterInformation, done)
 
-    _parseCharacterInformation: (done) ->
-      return (error, body, response) ->
-        console.log("parsing character info")
-        done(new InternalOAuthError(
-          constants.fetchCharacterInformationError, error)) if error
+    _parseCharacterInformation: (error, body, response, done) ->
+      console.log("parsing character info")
+      done(new InternalOAuthError(
+        constants.fetchCharacterInformationError, error)) if error
 
-        console.log("no error, body is #{body}")
-        console.log("response code is #{response.statusCode}") if response
+      console.log("no error, body is #{body}")
+      console.log("response code is #{response.statusCode}") if response
 
-        try
-          responseBody = JSON.parse body
+      try
+        responseBody = JSON.parse body
 
-          if responseBody.error
-            errorMessage = responseBody.error_description \
-              if responseBody.error_description
-            errorMessage ?= 'Unable to obtain character information'
-            return done(new InternalOAuthError(
-              errorMessage,
-              responseBody.error))
+        return done(new VerificationError(
+          responseBody.error,
+          responseBody.error_description)) if responseBody.error
 
-          characterInformation =
-            characterID:        responseBody.CharacterID
-            characterName:      responseBody.CharacterName
-            expiresOn:          responseBody.ExpiresOn
-            scopes:             responseBody.Scopes
-            tokenType:          responseBody.TokenType
-            characterOwnerHash: responseBody.CharacterOwnerHash
+        characterInformation =
+          characterID:        responseBody.CharacterID
+          characterName:      responseBody.CharacterName
+          expiresOn:          responseBody.ExpiresOn
+          scopes:             responseBody.Scopes
+          tokenType:          responseBody.TokenType
+          characterOwnerHash: responseBody.CharacterOwnerHash
 
-          done(null, characterInformation)
+        done(null, characterInformation)
 
-        catch exception
-          done(exception)
+      catch exception
+        done(exception)
 
   return EveOnlineStrategy
