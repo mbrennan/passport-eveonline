@@ -1,4 +1,5 @@
 sinon = require('sinon')
+constants = require('../src/constants')
 
 class DummyOAuth2
   constructor: ->
@@ -102,20 +103,39 @@ describe 'EVE Online OAuth Strategy', ->
       @accessToken = 'deadbeef'
       @userProfileCallback = sinon.spy()
       @strategy.userProfile(@accessToken, @userProfileCallback)
-      @oAuth2FunctionCall = @strategy._oauth2.get.args[0]
+      @oAuth2Get = @strategy._oauth2.get.args[0]
 
     it 'should fetch character information using the protected _oauth2
         object', ->
-      @oAuth2FunctionCall[0].should.be.a.String
-      @oAuth2FunctionCall[1].should.equal @accessToken
-      @oAuth2FunctionCall[2].should.be.a.Function
+      @oAuth2Get[0].should.be.a.String
+      @oAuth2Get[1].should.equal @accessToken
+      @oAuth2Get[2].should.be.a.Function
 
     describe 'when called back with response containing character
               information', ->
       beforeEach ->
-        @expectedProfile = null
+        oAuth2GetCallback = @oAuth2Get[2]
+        oAuth2GetCallback(null, null, null)
+        @expectedProfile =
+          characterID: 54321
+          characterName: 'Kooky Kira'
+          expiresOn: 'Some Expiration Date'
+          scopes: []
+          tokenType: 'Character'
+          characterOwnerHash: 'beefdeadbad'
 
       it 'should callback when complete', ->
         @userProfileCallback.calledWith(null, @expectedProfile).should.be.true
 
+    describe 'when called back with an error', ->
+      beforeEach ->
+        oAuth2GetCallback = @oAuth2Get[2]
+        @innerError = new Error('some error')
+        oAuth2GetCallback(@innerError)
+        @error = @userProfileCallback.args[0][0]
+
+      it 'should callback with an InternalOAuthError', ->
+        @error.name.should.equal 'InternalOAuthError'
+        @error.message.should.equal constants.fetchCharacterInformationError
+        @error.oauthError.should.equal @innerError
 

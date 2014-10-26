@@ -1,3 +1,6 @@
+constants           = require './constants'
+InternalOAuthError  = require('passport-oauth2').InternalOAuthError
+
 module.exports = (oAuth2Strategy) ->
   class EveOnlineStrategy extends oAuth2Strategy
     constructor: (options, @_verify) ->
@@ -24,6 +27,7 @@ module.exports = (oAuth2Strategy) ->
 
     _parseCharacterInformation: (done) ->
       return (error, body, response) ->
-        done(null, null)
+        done(new InternalOAuthError(
+          constants.fetchCharacterInformationError, error))
 
   return EveOnlineStrategy
