@@ -15,28 +15,21 @@ module.exports = (oAuth2Strategy) ->
       options.verifyURL ?= constants.defaultVerifyURL
       @_verifyURL = options.verifyURL
 
-      console.log("building new passport-eveonline strategy with options:")
-      console.log(options)
       super(options, @_verifyOAuth2)
+      @_oauth2.useAuthorizationHeaderforGET(true)
 
       @name = 'eveonline'
 
     userProfile: (accessToken, done) ->
-      console.log("userProfile invoked, invoking _oauth2 with access token #{accessToken}...")
       @_oauth2.get(@_verifyURL, accessToken, (error, body, response) =>
           @_parseCharacterInformation(error, body, response, done))
 
     _verifyOAuth2: (accessToken, refreshToken, characterInformation, done) ->
-      console.log("_verifyOAuth2 invoked, accessToken #{accessToken}, refresh token #{refreshToken}, character info #{JSON.stringify(characterInformation)} ")
       @_verifyCallback(characterInformation, done)
 
     _parseCharacterInformation: (error, body, response, done) ->
-      console.log("parsing character info")
       done(new InternalOAuthError(
         constants.fetchCharacterInformationError, error)) if error
-
-      console.log("no error, body is #{body}")
-      console.log("response code is #{response.statusCode}") if response
 
       try
         responseBody = JSON.parse body
@@ -45,15 +38,7 @@ module.exports = (oAuth2Strategy) ->
           responseBody.error,
           responseBody.error_description)) if responseBody.error
 
-        characterInformation =
-          characterID:        responseBody.CharacterID
-          characterName:      responseBody.CharacterName
-          expiresOn:          responseBody.ExpiresOn
-          scopes:             responseBody.Scopes
-          tokenType:          responseBody.TokenType
-          characterOwnerHash: responseBody.CharacterOwnerHash
-
-        done(null, characterInformation)
+        done(null, responseBody)
 
       catch exception
         done(exception)

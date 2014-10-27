@@ -6,6 +6,7 @@ VerificationError = require('../src/errors/VerificationError')
 class DummyOAuth2
   constructor: ->
     @get = sinon.spy()
+    @useAuthorizationHeaderforGET = sinon.spy()
 
 class DummyStrategy
   constructor: (_arguments...) ->
@@ -45,6 +46,10 @@ describe 'EVE Online OAuth Strategy', ->
 
   it "must not have an attribute named '_verify'", ->
     should.not.exist @strategy._verify
+
+  it 'should use the authorization header for get requests', ->
+    @strategy._oauth2.useAuthorizationHeaderforGET.calledWith(
+      true).should.be.true
 
   describe 'when created with defaults', ->
     it 'should invoke the base strategy constructor', ->
@@ -154,26 +159,8 @@ describe 'EVE Online OAuth Strategy', ->
       it 'should not return an error', ->
         should.not.exist @userProfileCallback.args[0][0]
 
-      it 'should find the character id', ->
-        @characterInformation.characterID.should.equal \
-          @expectedProfile.CharacterID
-
-      it 'should find the character name', ->
-        @characterInformation.characterName.should.equal \
-          @expectedProfile.CharacterName
-
-      it 'should find the expires on field', ->
-        @characterInformation.expiresOn.should.equal @expectedProfile.ExpiresOn
-
-      it 'should find the scopes field', ->
-        @characterInformation.scopes.should.equal @expectedProfile.Scopes
-
-      it 'should find the token type', ->
-        @characterInformation.tokenType.should.equal @expectedProfile.TokenType
-
-      it 'should find the character owner hash', ->
-        @characterInformation.characterOwnerHash.should.equal \
-          @expectedProfile.CharacterOwnerHash
+      it 'should provide exactly what was given by the EVE API', ->
+        @userProfileCallback.calledWith(null, @expectedProfile).should.be.true
 
     describe 'when called back with an error in the JSON response', ->
       beforeEach ->
