@@ -16,7 +16,8 @@
     "mocha": "^2.0.1",
     "sinon": "^1.10.3",
     "gulp-plumber": "^0.6.6",
-    "chai": "^1.9.2"
+    "chai": "^1.9.2",
+    "sinon-chai": "^2.6.0"
   },
   "homepage": "https://github.com/mbrennan/passport-eveonline",
   "keywords": [

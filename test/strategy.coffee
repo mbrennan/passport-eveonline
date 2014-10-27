@@ -1,7 +1,10 @@
-sinon = require('sinon')
-should = require('chai').should()
-constants = require('../src/constants')
+sinon             = require('sinon')
+chai              = require('chai')
+sinonChai         = require('sinon-chai')
+should            = require('chai').should()
+constants         = require('../src/constants')
 VerificationError = require('../src/errors/VerificationError')
+chai.use(sinonChai)
 
 class DummyOAuth2
   constructor: ->
@@ -48,12 +51,11 @@ describe 'EVE Online OAuth Strategy', ->
     should.not.exist @strategy._verify
 
   it 'should use the authorization header for get requests', ->
-    @strategy._oauth2.useAuthorizationHeaderforGET.calledWith(
-      true).should.be.true
+    @strategy._oauth2.useAuthorizationHeaderforGET.should.be.calledWith true
 
   describe 'when created with defaults', ->
     it 'should invoke the base strategy constructor', ->
-      @strategy.parentConstructor.called.should.be.true
+      @strategy.parentConstructor.should.be.called
 
     it 'should pass authorizationURL to the base strategy constructor', ->
       @constructorOptions.should.have.property('authorizationURL').equal \
@@ -112,8 +114,8 @@ describe 'EVE Online OAuth Strategy', ->
       @strategy.authenticate(@request, @authenticateOptions)
 
     it 'should invoke the base authenticate function', ->
-      @strategy.parentAuthenticate.calledWith(
-        @request, @authenticateOptions).should.be.true
+      @strategy.parentAuthenticate.should.be.calledWith(
+        @request, @authenticateOptions)
 
   describe 'when verifying', ->
     beforeEach ->
@@ -127,7 +129,7 @@ describe 'EVE Online OAuth Strategy', ->
         @oAuth2VerifyDone)
 
     it 'translates passport-oauth2 verifications', ->
-      @verify.calledWith(@profile, @oAuth2VerifyDone).should.be.true
+      @verify.should.be.calledWith(@profile, @oAuth2VerifyDone)
 
   describe 'when building character information with defaults', ->
     beforeEach ->
@@ -160,7 +162,7 @@ describe 'EVE Online OAuth Strategy', ->
         should.not.exist @userProfileCallback.args[0][0]
 
       it 'should provide exactly what was given by the EVE API', ->
-        @userProfileCallback.calledWith(null, @expectedProfile).should.be.true
+        @userProfileCallback.should.be.calledWith(null, @expectedProfile)
 
     describe 'when called back with an error in the JSON response', ->
       beforeEach ->
