@@ -36,9 +36,11 @@
     "url": "https://github.com/mbrennan/passport-eveonline"
   },
   "scripts": {
-    "build": "gulp",
+    "build": "gulp build",
     "bump": "gulp bump",
     "clean": "gulp clean",
+    "prepublish": "gulp rebuild",
+    "rebuild": "gulp rebuild",
     "test": "mocha --compilers coffee:coffee-script/register --require should test",
     "watch": "gulp watch-coffeescript"
   },

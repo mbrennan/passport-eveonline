@@ -15,7 +15,7 @@ gulp.task 'compile-coffeescript', ->
     .pipe(gulp.dest('lib/'))
 
 gulp.task 'clean-coffeescript', ->
-  del('lib')
+  del.sync('lib')
 
 gulp.task 'clean', ['clean-coffeescript']
 
@@ -27,4 +27,8 @@ gulp.task 'bump', ->
 gulp.task 'watch-coffeescript', ->
   gulp.watch(['src/**/*.coffee'], ['compile-coffeescript'])
 
-gulp.task 'default', ['compile-coffeescript']
+gulp.task 'build', ['compile-coffeescript']
+
+gulp.task 'rebuild', ['clean', 'build']
+
+gulp.task 'default', ['build']
