@@ -1,5 +1,5 @@
 sinon = require('sinon')
-should = require('should')
+should = require('chai').should()
 constants = require('../src/constants')
 VerificationError = require('../src/errors/VerificationError')
 
