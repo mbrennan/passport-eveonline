@@ -74,9 +74,6 @@ providing them in the options:
         }))
     ...
 
-- Note:  This release uses the SISI (Singularity) test server URLs by default
-because the Tranquility server URLs are not yet working.
-
 #### Authenticate Requests
 
 Use `passport.authenticate()`, specifying the `'eveonline'` strategy, to
