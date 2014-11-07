@@ -45,7 +45,7 @@
     "test": "mocha --compilers coffee:coffee-script/register test",
     "watch": "gulp watch-coffeescript"
   },
-  "version": "0.1.0",
+  "version": "0.1.1",
   "dependencies": {
     "passport-oauth2": "^1.1.2"
   }
