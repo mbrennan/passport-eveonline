@@ -43,20 +43,22 @@ All of the information provided in `characterInformation` parameter to the
 [Single Sign-On (SSO) section](https://developers.testeveonline.com/resource/single-sign-on).
 Here's an example of how to construct and configure the strategy:
 
-    passport.use(new EveOnlineStrategy({
-        clientID: EVEONLINE_CLIENT_ID,
-        secretKey: EVEONLINE_SECRET_KEY,
-        callbackURL: "http://mysite.com/auth/eveonline/callback"
-      },
-      function(characterInformation, done) {
-        User.findOrCreate(
-          { characterID: characterInformation.characterID },
-          function (err, user) {
-            return done(err, user);
-          }
-        );
+```js
+passport.use(new EveOnlineStrategy({
+    clientID: EVEONLINE_CLIENT_ID,
+    clientSecret: EVEONLINE_SECRET_KEY,
+    callbackURL: "http://mysite.com/auth/eveonline/callback"
+  },
+  function(characterInformation, done) {
+    User.findOrCreate(
+      { characterID: characterInformation.characterID },
+      function (err, user) {
+        return done(err, user);
       }
-    ));
+    );
+  }
+));
+```
 
 - Note:  The authentication token and refresh token are not provided because in
 the initial release of the EVE Online SSO API does not provide any other API
@@ -65,14 +67,16 @@ calls other than authentication.  Refreshing tokens is also not possible.
 You may also override the default authorization, token, and verify URLs by
 providing them in the options:
 
-    passport.use(new EveOnlineStrategy({
-        ...
-        authorizationURL:   'https://some.other.url.com/auth',
-        tokenURL:           'https://some.other.url.com/token',
-        verifyURL:          'https://some.other.url.com/verify'
-        ...
-        }))
+```js
+passport.use(new EveOnlineStrategy({
     ...
+    authorizationURL:   'https://some.other.url.com/auth',
+    tokenURL:           'https://some.other.url.com/token',
+    verifyURL:          'https://some.other.url.com/verify'
+    ...
+    }))
+...
+```
 
 #### Authenticate Requests
 
@@ -82,15 +86,17 @@ authenticate requests.
 For example, as route middleware in an [Express](http://expressjs.com/)
 application:
 
-    app.get('/auth/eveonline',
-      passport.authenticate('eveonline'));
+```js
+app.get('/auth/eveonline',
+  passport.authenticate('eveonline'));
 
-    app.get('/auth/eveonline/callback',
-      passport.authenticate('eveonline', {
-        successRedirect: '/',
-        failureRedirect: '/login'
-      })
-    );
+app.get('/auth/eveonline/callback',
+  passport.authenticate('eveonline', {
+    successRedirect: '/',
+    failureRedirect: '/login'
+  })
+);
+```
 
 ## Tests
 
