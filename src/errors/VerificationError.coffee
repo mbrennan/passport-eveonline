@@ -1,6 +1,8 @@
 class VerificationError extends Error
   constructor: (@code, @description) ->
     super()
+    code = ""
+    description = ""
     Error.captureStackTrace(@, arguments.callee);
     @name = 'VerificationError';
     code ?= "server_error"

@@ -13,6 +13,9 @@ module.exports = (oAuth2Strategy) ->
       options.authorizationURL ?= constants.defaultAuthorizationURL
       options.tokenURL ?= constants.defaultTokenURL
       options.verifyURL ?= constants.defaultVerifyURL
+      @params = new Object()
+      @params.scope = options.scope or ''
+
       @_verifyURL = options.verifyURL
 
       super(options, @_verifyOAuth2)
@@ -20,12 +23,15 @@ module.exports = (oAuth2Strategy) ->
 
       @name = 'eveonline'
 
+    authorizationParams: () ->
+      return @params
+
     userProfile: (accessToken, done) ->
       @_oauth2.get(@_verifyURL, accessToken, (error, body, response) =>
           @_parseCharacterInformation(error, body, response, done))
 
     _verifyOAuth2: (accessToken, refreshToken, characterInformation, done) ->
-      @_verifyCallback(characterInformation, done)
+      @_verifyCallback(accessToken, refreshToken, characterInformation, done)
 
     _parseCharacterInformation: (error, body, response, done) ->
       done(new InternalOAuthError(

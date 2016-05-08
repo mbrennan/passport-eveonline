@@ -32,6 +32,7 @@ describe 'EVE Online OAuth Strategy', ->
     @clientID = 12345
     @clientSecret = 'deadbeefbaadf00d'
     @callbackURL = 'https://dead.beef/bad/f00d'
+    @scope = 'myScope'
     @verify = sinon.spy()
     @strategy = new EveOnlineStrategy(
       clientID: @clientID
@@ -88,6 +89,7 @@ describe 'EVE Online OAuth Strategy', ->
         callbackURL: @callbackURL
         authorizationURL: @customAuthorizationURL
         tokenURL: @customTokenURL
+        scopes: @scope
         @verify)
       @constructorOptions = @strategy.parentConstructor.args[0][0]
 
@@ -97,6 +99,9 @@ describe 'EVE Online OAuth Strategy', ->
 
     it 'should use the tokenURL property provided', ->
       @constructorOptions.should.have.property('tokenURL').equal @customTokenURL
+
+    it 'should use the scopes property provided', ->
+      @constructorOptions.should.have.property('scopes').equal @scope
 
   describe 'when constructing without a callbackURL', ->
     it 'should throw an exception', ->
@@ -129,7 +134,7 @@ describe 'EVE Online OAuth Strategy', ->
         @oAuth2VerifyDone)
 
     it 'translates passport-oauth2 verifications', ->
-      @verify.should.be.calledWith(@profile, @oAuth2VerifyDone)
+      @verify.should.be.calledWith('access token', 'refresh token', @profile, @oAuth2VerifyDone)
 
   describe 'when building character information with defaults', ->
     beforeEach ->
